@@ -1,0 +1,188 @@
+<!doctype html>
+<html ng-app="auth">
+<head>
+    <meta charset="UTF-8">
+    
+    <title>Auth</title>
+    
+    <link rel=stylesheet type=text/css href="css/reset.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="http://underscorejs.org/underscore-min.js"></script>
+    <script src="https://code.angularjs.org/latest/angular.min.js"></script>
+    <script src="app/auth/auth.js"></script>
+    
+    <style>
+        .pass{
+            background-color:darksalmon;
+        }
+    </style>
+</head>
+<body ng-controller="mainCtrl">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#/">auth</a>
+            </div>
+            <ul class="nav navbar-nav" ng-show="!loggedOut">
+                <li><a>{{login}}</a></li>
+                <li><a href="" ng-click="showHistory()">history</a></li>
+                <li><a href="" ng-click="logOut()">logout</a></li>
+                
+            </ul>
+            
+        </div>
+    </nav>
+    
+    <div ng-show="loggedOut">
+        <div class="form-group col-sm-12">
+            <label style="text-align: right; margin-top:5px; right:14px;" class="control-label col-sm-3">option</label>
+            <div class="btn-group">
+                <label  ng-click="formTypeChange('myLogin')" class="btn btn-primary">login</label>
+                <label  ng-click="formTypeChange('myRegister')" class="btn btn-default">register</label>
+                <label  ng-click="formTypeChange('ldapLogin')" class="btn btn-success">ldap</label>
+                <label  ng-click="formTypeChange('googleLogin')" class="btn btn-warning">google</label>
+            </div>
+        </div>
+
+        <div ng-show="formType == 'myLogin'">
+            <form name="myLogin" class="form-horizontal">
+                <div class="form-group">
+                    <label for="login" class="control-label col-sm-3">login</label>
+                    <div class="col-sm-6">
+                        <input type="text" ng-model="login" class="form-control" name="login" ng-change="loginState = ''" required ng-class="{'pass': loginState == 'wrongLogin'}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="control-label col-sm-3">password</label>
+                    <div class="col-sm-6">
+                        <input type="password" ng-model="password" class="form-control" name="password" ng-change="loginState = ''" required ng-class="{'pass': loginState == 'wrongPass'}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button class="btn btn-primary" ng-click="submit('myLogin')" ng-disabled="myLogin.$invalid">login</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div ng-show="formType == 'myRegister'">
+            <form name="myRegister" class="form-horizontal">
+                <div class="form-group">
+                    <label for="login" class="control-label col-sm-3">login</label>
+                    <div class="col-sm-6">
+                        <input type="text" ng-model="login" class="form-control" name="login" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="control-label col-sm-3">email</label>
+                    <div class="col-sm-6">
+                        <input type="email" ng-model="email" class="form-control" name="email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="control-label col-sm-3">password</label>
+                    <div class="col-sm-6">
+                        <input type="password" ng-model="password" class="form-control" name="password" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="firstName" class="control-label col-sm-3">first name</label>
+                    <div class="col-sm-6">
+                        <input type="text" ng-model="firstName" class="form-control" name="firstName" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="lastName" class="control-label col-sm-3">last name</label>
+                    <div class="col-sm-6">
+                        <input type="text" ng-model="lastName" class="form-control" name="lastName" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button class="btn btn-default" ng-click="submit('myRegister')" ng-disabled="myRegister.$invalid">register</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div ng-show="formType == 'ldapLogin'">
+            <form name="ldapLogin" class="form-horizontal">
+                <div class="form-group">
+                    <label for="login" class="control-label col-sm-3">login</label>
+                    <div class="col-sm-6">
+                        <input type="text" ng-model="login" class="form-control" name="login" ng-change="loginState = ''" required ng-class="{'pass': loginState == 'wrongLogin'}">
+                    </div>
+                </div> 
+                <div class="form-group">
+                    <label for="password" class="control-label col-sm-3">password</label>
+                    <div class="col-sm-6">
+                        <input type="password" ng-model="password" class="form-control" name="password" ng-change="loginState = ''" required ng-class="{'pass': loginState == 'wrongLogin'}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button class="btn btn-success" ng-click="submit('ldapLogin')" ng-disabled="ldapLogin.$invalid">login</button>
+                    </div>
+                </div>
+            </form>
+        </div> 
+
+        <div ng-show="formType == 'googleLogin'">
+            <a id="google" class="list-group-item col-sm-6 col-sm-offset-3" >
+                <h2 class="list-group-heading text-warning bg-warning">Sign in!</h2>
+            </a>
+        </div>
+        
+        <div ng-show="formType == 'registeredOK'">
+            <div class="bg-success col-sm-6 col-sm-offset-3">
+                <br>
+                <p class="text-success">You have been successfully registered!</p>
+                <p class="text-success">You can log in now!</p>
+            </div>
+        </div>
+        <div ng-show="formType == 'registeredNO'">
+            <div class="bg-danger col-sm-6 col-sm-offset-3">
+                <br>
+                <p class="text-danger">User with this login already exists!</p>
+                <p class="text-danger">Try another one!</p>
+            </div>
+        </div>
+    </div>
+    <div ng-show="!loggedOut && history == false">
+        <div class="bg-success col-sm-6 col-sm-offset-3">
+            <br>
+            <p class="text-success">You have been successfully logged in!</p>
+        </div>
+
+    </div>
+    <div ng-show="history == true">
+        
+        <div class="col-sm-3 col-sm-offset-2">
+            <a href="" class="list-group-item">
+                <h4 class="list-group-heading">myRegister: {{stat.myRegister.length || 0}}</h4>
+                <h4 class="list-group-heading text-primary">myLogin: {{stat.myLogin.length || 0}}</h4>
+                <h4 class="list-group-heading text-success">ldapLogin: {{stat.ldapLogin.length || 0}}</h4>
+                <h4 class="list-group-heading text-warning">googleLogin: {{stat.googleLogin.length || 0}}</h4>
+            </a>
+        </div>
+        <ul class="list-group col-sm-5">
+            <a href="" class="list-group-item" ng-repeat="x in historyRecords">
+                <h4 class="list-group-heading">login: {{x.login}}</h4>
+                <div class="list-group-item-text">type: {{x.type}}</div>
+                <div class="list-group-item-text">time: {{x.date_time}}</div>
+            </a>
+        </ul>
+    </div>
+    
+</body>
+</html>
